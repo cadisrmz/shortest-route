@@ -1,9 +1,11 @@
 package projects.nk.shortestroute.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +24,60 @@ public class DataGraph {
 
 	/** Returns the path computed for the source and destination */
 	public List<String[]> findPaths(String src, String dest) {
-		throw new UnsupportedOperationException("Not Implemented");
+		
+		DataNode rootNode = graph.get(src);
+		Stack<String> currPath = new Stack<>();
+		
+		if (rootNode == null) return null;
+		
+		List<String[]> allPaths = new ArrayList<>();
+
+		findAndAddPaths(allPaths, rootNode, dest, currPath);
+		
+		return allPaths;
+	}
+
+	private void findAndAddPaths(List<String[]> allPaths, DataNode currNode, 
+			String dest, Stack<String> currPath) {	
+		
+		String currNodeData = currNode.data;
+		
+		try {
+			// push the data
+			// and we use the finally block to clean up, no matter what
+			currPath.push(currNodeData);
+			
+			// recursion always has a termination condition
+			// if we found the data, then we add the path to
+			// the list of solutions and return
+			if (dest.equals(currNodeData)) {
+				allPaths.add(currPath.toArray(new String[0]));
+				return;
+			}
+			
+	
+			// Directed graph. Lets traverse depth first
+			// and lets use recursion
+			// we know that recursion will result in a limitation on the
+			// length of the paths we can support, but it should work
+			// for the intended solution at this time
+			for( DataNode node : currNode.connectedTo) {
+				// if we have already evaluated the node on our way in,
+				// then we should not go down the same track
+				// to avoid circular dependencies
+				if ( currPath.contains(node.data)) {
+					LOG.error("Detected Circular path. Ignoring.");
+					LOG.info("Path: "+currPath.toString());
+					LOG.info("Connecting to node: " + node.data);
+					continue;
+				}
+				// Potential path. Initiate investigation.
+				findAndAddPaths(allPaths, node, dest, currPath);
+			}
+		} finally {
+			// done processing all paths from this node. Clean up.
+			currPath.pop();
+		}
 	}
 
 	/**
@@ -34,7 +89,7 @@ public class DataGraph {
 		DataNode srcNode = findOrCreateGraphNode(src);
 		DataNode destNode = findOrCreateGraphNode(dest);
 		srcNode.connectedTo.add(destNode);
-		LOG.info("Updated node:" + srcNode);
+		LOG.debug("Updated node:" + srcNode);
 	}
 
 	/** Find a node in the Map or create, insert and return if none 

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -30,8 +31,12 @@ public class ShortestPath {
 		}
 		
 		List<String[]> paths = new ShortestPath().findPaths(args[0], args[1], args[2]);
-		LOG.info("Path options:");
-		LOG.info(paths.toString());
+		if (paths != null) {
+			System.out.println("Path options:");
+			for (String[] path:paths) {
+				System.out.println(Arrays.toString(path));
+			}
+		}
 	}
 
 	public List<String[]> findPaths(String filename, String source, String dest) {		
