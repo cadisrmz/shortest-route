@@ -35,28 +35,21 @@ public class ShortestPath {
 
 	private void readDataFile() {
 		String dataFileName = settings.getProperty("data.file");
-		InputStream is = null;
-		
-		
-		is = this.getClass().getResourceAsStream(dataFileName);	
-		if (is == null) {
-			// file not found in path
-			//TODO: Need to flip this case once the cli argument processing
-			// is in place.
-			try (FileReader dataFile = new FileReader(dataFileName);
-					BufferedReader reader = new BufferedReader(dataFile)) {
-				String line = reader.readLine();
-				LOG.info("Found line:" + line);
-			} catch (FileNotFoundException e) {
-				LOG.error("File Not Found: " + dataFileName, e);
-			} catch (IOException e) {
-				LOG.error("Error accessing file: " + dataFileName, e);
-			}
-		}		
+
+		// file not found in path
+		try (FileReader dataFile = new FileReader(dataFileName);
+				BufferedReader reader = new BufferedReader(dataFile)) {
+			String line = reader.readLine();
+			LOG.info("Found line:" + line);
+		} catch (FileNotFoundException e) {
+			LOG.error("File Not Found: " + dataFileName);
+		} catch (IOException e) {
+			LOG.error("Error accessing file: " + dataFileName, e);
+		}
 	}
 
 	private void readDefaultProperties() {
-		try (InputStream defaultPropertiesFile = this.getClass().getResourceAsStream("application.properties")) {
+		try (InputStream defaultPropertiesFile = this.getClass().getResourceAsStream("/application.properties")) {
 		    settings.load(defaultPropertiesFile);
 		    
 		} catch (IOException e) {
