@@ -66,9 +66,10 @@ public class ShortestPath {
 		if (dataFilePath.toFile().exists()) {
 			// file not found in path
 			try ( Stream<String> lines = Files.lines(dataFilePath) ) {
-				lines.filter(line-> line.split(" ").length >= 2)
-					.forEach(line -> {
-						String[] parts = line.split(" ");
+				lines
+					.map(line->line.trim().split(" "))					
+					.filter(lineElements -> lineElements.length >= 2)
+					.forEach(parts -> {
 						dataGraph.populateGraph(parts[0], parts[1]);
 					});
 			} catch (IOException e) {

@@ -47,11 +47,11 @@ public class ShortestPathTest {
 		if (dataFilePath.toFile().exists()) {
 			// file not found in path
 			try ( Stream<String> lines = Files.lines(dataFilePath) ) {
-				lines.filter(line-> line.split(" ").length >= 2)
-					.forEach(line -> {
-						String[] parts = line.split(" ");
-						dataGraph.populateGraph(parts[0], parts[1]);
-					});
+				lines.map(line->line.trim().split(" "))					
+				.filter(lineElements -> lineElements.length >= 2)
+				.forEach(parts -> {
+					dataGraph.populateGraph(parts[0], parts[1]);
+				});
 			} catch (IOException e) {
 				LOG.error("Error accessing file:", e);
 				fail("Error accessing file: " + filename);
