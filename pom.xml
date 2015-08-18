@@ -86,7 +86,7 @@
 				<executions>
 					<execution>
 						<id>copy-resources</id>
-						<phase>package</phase>
+						<phase>compile</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
@@ -94,9 +94,9 @@
 							<outputDirectory>${project.build.directory}</outputDirectory>
 							<resources>
 								<resource>
-									<directory>src/main/resources</directory>
+									<directory>src/**/resources</directory>
 									<includes>
-										<include>sample-data.txt</include>
+										<include>**/*.txt</include>
 									</includes>
 								</resource>
 							</resources>
