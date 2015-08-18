@@ -50,8 +50,7 @@ public class ShortestPath {
 
 	private void readDefaultProperties() {
 		try (InputStream defaultPropertiesFile = this.getClass().getResourceAsStream("/application.properties")) {
-		    settings.load(defaultPropertiesFile);
-		    
+		    settings.load(defaultPropertiesFile);		    
 		} catch (IOException e) {
 			// Default properties file not found ??!!
 			// this cannot happen since we ship it in the jar
