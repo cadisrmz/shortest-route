@@ -23,18 +23,25 @@ public class ShortestPath {
 	
 	public static void main(String[] args) {
 		if (args.length != 3) {
-			LOG.error("Usage: ShortestPath <datafile> <src> <dest>");
-			LOG.error("    where datafile is has each flight segment on one line");
-			LOG.error("    and the Source and Destination separated by a space.");
-			LOG.error("    Any additional data after these two fields will be ignored.");
+			System.err.println("Usage: ShortestPath <datafile> <src> <dest>");
+			System.err.println("    where datafile is has each flight segment on one line");
+			System.err.println("    and the Source and Destination separated by a space.");
+			System.err.println("    Any additional data after these two fields will be ignored.");
 			return;
 		}
 		
 		List<String[]> paths = new ShortestPath().findPaths(args[0], args[1], args[2]);
-		if (paths != null) {
-			System.out.println("Path options:");
-			for (String[] path:paths) {
-				System.out.println(Arrays.toString(path));
+		
+		if (paths == null) {
+			System.err.println("Mentioned source ["+args[1]+"] not found in the data file.");
+		} else {
+			if (paths.isEmpty()) {
+				System.err.println("No paths between the mentioned Source and Destination.");
+			} else {
+				System.out.println("Path options:");
+				for (String[] path:paths) {
+					System.out.println(Arrays.toString(path));
+				}
 			}
 		}
 	}
