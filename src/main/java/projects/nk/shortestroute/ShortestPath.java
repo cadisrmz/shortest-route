@@ -1,14 +1,10 @@
 package projects.nk.shortestroute;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Properties;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -22,68 +18,52 @@ import projects.nk.shortestroute.data.DataGraph;
  * @author Navneet
  */
 public class ShortestPath {
-	public static final String PROPERTY_DATAFILE_PATH = "data.file";
-
-	private static final Logger LOG = LoggerFactory.getLogger(ShortestPath.class);
-	
-	Properties settings = new Properties();
-	DataGraph dataGraph = new DataGraph();
+	private static final Logger LOG = LoggerFactory.getLogger(ShortestPath.class);	
 	
 	public static void main(String[] args) {
-		// read default properties
-		new ShortestPath().run(args);
-	}
-
-	public void run(String[] args) {
-		LOG.debug("Starting ...");
-		// read default settings
+		if (args.length != 3) {
+			LOG.error("Usage: ShortestPath <datafile> <src> <dest>");
+			LOG.error("    where datafile is has each flight segment on one line");
+			LOG.error("    and the Source and Destination separated by a space.");
+			LOG.error("    Any additional data after these two fields will be ignored.");
+			return;
+		}
 		
-		readDefaultProperties();
-		processArguments(args);
-		readDataFile();
-		LOG.debug("Done.");
+		List<String[]> paths = new ShortestPath().findPaths(args[0], args[1], args[2]);
+		LOG.info("Path options:");
+		LOG.info(paths.toString());
 	}
 
-	private void processArguments(String[] args) {
-		if (args.length == 1) {
-			setDataFilePath(args[0]);
-		}		
+	public List<String[]> findPaths(String filename, String source, String dest) {		
+		DataGraph dataGraph = new DataGraph();
+		readDataFile(filename, dataGraph);
+		return dataGraph.findPaths(source, dest);
 	}
 
-	public void readDataFile() {
-		String dataFileName = getDataFilePath();
-		Path dataFilePath = Paths.get(dataFileName);
+	/** The datafile format is specific to this application of 
+	 * the DataGraph object. So keep the specifics to this class.
+	 * This method is public only for use with the test class. 
+	 * Ideally, I would move it to a Util class as a static method.
+	 * 
+	 * @param filename the name of the file to process
+	 * @param dataGraph the graph to be populated
+	 */
+	public void readDataFile(String filename, DataGraph dataGraph) {
+		Path dataFilePath = Paths.get(filename);
 		
 		if (dataFilePath.toFile().exists()) {
 			// file not found in path
 			try ( Stream<String> lines = Files.lines(dataFilePath) ) {
-				dataGraph.populateGraph(lines);
+				lines.filter(line-> line.split(" ").length >= 2)
+					.forEach(line -> {
+						String[] parts = line.split(" ");
+						dataGraph.populateGraph(parts[0], parts[1]);
+					});
 			} catch (IOException e) {
-				LOG.error("Error accessing file: " + dataFileName, e);
+				LOG.error("Error accessing file: " + filename, e);
 			}
 		} else {
-			LOG.error("File Not Found: " + dataFileName);
-		}
-	}
-
-	public String getDataFilePath() {
-		return settings.getProperty(PROPERTY_DATAFILE_PATH);
-	}
-
-	public void setDataFilePath(String path) {
-		assert(path != null);
-		settings.setProperty(PROPERTY_DATAFILE_PATH, path);
-		LOG.info("Using data from file: " + getDataFilePath());
-	}
-
-	public void readDefaultProperties() {
-		try (InputStream defaultPropertiesFile = this.getClass().getResourceAsStream("/application.properties")) {
-		    settings.load(defaultPropertiesFile);		    
-		} catch (IOException e) {
-			// Default properties file not found ??!!
-			// this cannot happen since we ship it in the jar
-			// check the error
-			LOG.error("application.properties file not found", e);
+			LOG.error("File Not Found: " + filename);
 		}
 	}
 }

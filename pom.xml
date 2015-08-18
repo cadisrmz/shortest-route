@@ -37,9 +37,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
 				<configuration>
 					<excludes>
-						<exclude>**/sample-data.txt</exclude>
+						<exclude>**/*sample-data.txt</exclude>
 					</excludes>
 					<archive>
 						<manifest>
@@ -75,31 +76,6 @@
 									</dependency>
 								</artifactItem>
 							</artifactItems>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.7</version>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}</outputDirectory>
-							<resources>
-								<resource>
-									<directory>src/**/resources</directory>
-									<includes>
-										<include>**/*.txt</include>
-									</includes>
-								</resource>
-							</resources>
 						</configuration>
 					</execution>
 				</executions>
