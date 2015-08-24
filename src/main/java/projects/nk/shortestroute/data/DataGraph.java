@@ -1,11 +1,11 @@
 package projects.nk.shortestroute.data;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,33 +20,33 @@ public class DataGraph {
 	 * purposes. The actual graph may actually be circular and hence needs to be
 	 * handled appropriately.
 	 */
-	private HashMap<String, DataNode> graph = new HashMap<>();
+	private TreeMap<String, DataNode> graph = new TreeMap<>();
 
 	/** Returns the path computed for the source and destination */
 	public List<String[]> findPaths(String src, String dest) {
 		
-		DataNode rootNode = graph.get(src);
+		List<String[]> allPaths = new ArrayList<>();
 		Stack<String> currPath = new Stack<>();
 		
-		if (rootNode == null) return null;
-		
-		List<String[]> allPaths = new ArrayList<>();
-
-		findAndAddPaths(allPaths, rootNode, dest, currPath);
+		findAndAddPaths(allPaths, src, dest, currPath);
 		
 		return allPaths;
 	}
 
-	private void findAndAddPaths(List<String[]> allPaths, DataNode currNode, 
+	private void findAndAddPaths(List<String[]> allPaths, String currNodeData, 
 			String dest, Stack<String> currPath) {	
 		
-		String currNodeData = currNode.data;
+		DataNode currNode = getGraphNode(currNodeData);
+		// Node not found. End of traversal path. Return.
+		if (currNode == null) {
+			return;
+		}
 		
 		try {
 			// push the data
 			// and we use the finally block to clean up, no matter what
 			currPath.push(currNodeData);
-			
+			LOG.info("Visiting: "+currPath);
 			// recursion always has a termination condition
 			// if we found the data, then we add the path to
 			// the list of solutions and return
@@ -55,24 +55,20 @@ public class DataGraph {
 				return;
 			}
 			
-	
 			// Directed graph. Lets traverse depth first
 			// and lets use recursion
 			// we know that recursion will result in a limitation on the
 			// length of the paths we can support, but it should work
 			// for the intended solution at this time
-			for( DataNode node : currNode.connectedTo) {
-				// if we have already evaluated the node on our way in,
-				// then we should not go down the same track
-				// to avoid circular dependencies
-				if ( currPath.contains(node.data)) {
-					LOG.error("Detected Circular path. Ignoring.");
-					LOG.info("Path: "+currPath.toString());
-					LOG.info("Connecting to node: " + node.data);
-					continue;
-				}
+			
+			// eliminate circular dependency
+			Set<String> toVisit = new HashSet<>();
+			currNode.connectedTo.forEach(node -> toVisit.add(node.data));			
+			toVisit.removeAll(currPath);
+
+			for( String nodeData : toVisit) {								
 				// Potential path. Initiate investigation.
-				findAndAddPaths(allPaths, node, dest, currPath);
+				findAndAddPaths(allPaths, nodeData, dest, currPath);
 			}
 		} finally {
 			// done processing all paths from this node. Clean up.
@@ -104,7 +100,7 @@ public class DataGraph {
 	 * @param data the data in the node that needs to be looked up
 	 */
 	synchronized private DataNode findOrCreateGraphNode(String data) {
-		DataNode node = graph.get(data);
+		DataNode node = getGraphNode(data);
 		if (node == null) {
 			node = new DataNode(data);
 			graph.put(data, node);

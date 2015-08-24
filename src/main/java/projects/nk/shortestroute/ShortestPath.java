@@ -34,15 +34,17 @@ public class ShortestPath {
 		
 		if (paths == null) {
 			System.err.println("Mentioned source ["+args[1]+"] not found in the data file.");
-		} else {
-			if (paths.isEmpty()) {
-				System.err.println("No paths between the mentioned Source and Destination.");
-			} else {
-				System.out.println("Path options:");
-				for (String[] path:paths) {
-					System.out.println(Arrays.toString(path));
-				}
-			}
+			return;
+		}
+		
+		if (paths.isEmpty()) {
+			System.err.println("No paths between the mentioned Source and Destination.");
+			return;
+		}
+		
+		System.out.println("Path options:");
+		for (String[] path:paths) {
+			System.out.println(Arrays.deepToString(path));
 		}
 	}
 
@@ -63,20 +65,21 @@ public class ShortestPath {
 	public void readDataFile(String filename, DataGraph dataGraph) {
 		Path dataFilePath = Paths.get(filename);
 		
-		if (dataFilePath.toFile().exists()) {
-			// file not found in path
-			try ( Stream<String> lines = Files.lines(dataFilePath) ) {
-				lines
-					.map(line->line.trim().split(" "))					
-					.filter(lineElements -> lineElements.length >= 2)
-					.forEach(parts -> {
-						dataGraph.populateGraph(parts[0], parts[1]);
-					});
-			} catch (IOException e) {
-				LOG.error("Error accessing file: " + filename, e);
-			}
-		} else {
+		// file not found in path
+		if (!dataFilePath.toFile().exists()) {
 			LOG.error("File Not Found: " + filename);
+			return;
+		}
+
+		try ( Stream<String> lines = Files.lines(dataFilePath) ) {
+			lines
+				.map(line->line.trim().split(" "))					
+				.filter(lineElements -> lineElements.length >= 2)
+				.forEach(parts -> {
+					dataGraph.populateGraph(parts[0], parts[1]);
+				});
+		} catch (IOException e) {
+			LOG.error("Error accessing file: " + filename, e);
 		}
 	}
 }
