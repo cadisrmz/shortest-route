@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.After;
@@ -73,6 +74,21 @@ public class ShortestPathTest {
 		// validate data
 		assertEquals(readFileToGraph(TEST_SAMPLE_DATA_TXT),dataGraph);
 		
+	}
+	
+	@Test
+	public void testfindPathsFromFileData() {
+		DataGraph dataGraph = new DataGraph();
+		
+		ShortestPath app = new ShortestPath();
+		app.readDataFile(TEST_SAMPLE_DATA_TXT, dataGraph);
+
+		List<String[]> path = dataGraph.findPaths("MSP", "AMS");
+		
+		assertEquals("Validate path from MSP to AMS", 2, path.size());
+		assertArrayEquals(path.get(0), new String[] {"MSP", "AMS"});
+		assertArrayEquals(path.get(1), new String[] {"MSP", "FFK", "AMS"});
+
 	}
 
 }
