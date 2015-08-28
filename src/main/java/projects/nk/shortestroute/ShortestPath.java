@@ -32,11 +32,6 @@ public class ShortestPath {
 		
 		List<String[]> paths = new ShortestPath().findPaths(args[0], args[1], args[2]);
 		
-		if (paths == null) {
-			System.err.println("Mentioned source ["+args[1]+"] not found in the data file.");
-			return;
-		}
-		
 		if (paths.isEmpty()) {
 			System.err.println("No paths between the mentioned Source and Destination.");
 			return;
