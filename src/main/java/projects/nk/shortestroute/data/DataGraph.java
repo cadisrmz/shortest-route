@@ -63,8 +63,8 @@ public class DataGraph {
 			
 			// eliminate circular dependency
 			Set<String> toVisit = new HashSet<>();
-			currNode.connectedTo.forEach(node -> toVisit.add(node.data));			
-			toVisit.removeAll(currPath);
+			currNode.connectedTo.forEach(node -> 
+				{ if (!currPath.contains(node.data)) toVisit.add(node.data); });
 
 			for( String nodeData : toVisit) {								
 				// Potential path. Initiate investigation.
@@ -88,11 +88,11 @@ public class DataGraph {
 		LOG.debug("Updated node:" + srcNode);
 	}
 
-	/** Find a node in the Map or create, insert and return if none 
-	 * @param data the data in the node that needs to be looked up
+	/** Does this graph have a node for the mentioned data 
+	 * @param data the data that needs to be looked up
 	 */
-	public DataNode getGraphNode(String data) {
-		return graph.get(data);
+	public boolean hasGraphNode(String data) {
+		return (getGraphNode(data) != null);
 	}
 	
 	/** Find a node in the Map or create, insert and return if none.
@@ -107,6 +107,10 @@ public class DataGraph {
 		}
 
 		return node;
+	}
+
+	private DataNode getGraphNode(String data) {
+		return graph.get(data);
 	}
 
 	@Override
@@ -135,7 +139,7 @@ public class DataGraph {
 	}
 
 	/** Each node in the DataGraph */
-	protected class DataNode {
+	private static class DataNode {
 		private String data;
 		private Set<DataNode> connectedTo = new HashSet<DataNode>();
 
@@ -189,6 +193,25 @@ public class DataGraph {
 		public boolean isConnectedTo(DataNode node) {			
 			return connectedTo.contains(node);
 		}
+	}
+
+	public int getConnectionCount(String nodeData) 
+		throws ObjectNotFoundException {
+		DataNode node = getGraphNode(nodeData);		
+		if (node == null) throw new ObjectNotFoundException();
+		
+		return node.getConnectionCount();
+	}
+
+	public boolean isConnected(String src, String dest) 
+			throws ObjectNotFoundException {
+		DataNode srcNode = getGraphNode(src);
+		if (srcNode == null) throw new ObjectNotFoundException();
+		
+		DataNode destNode = getGraphNode(dest);		
+		if (destNode == null) throw new ObjectNotFoundException();
+
+		return srcNode.isConnectedTo(destNode);
 	}
 
 }
