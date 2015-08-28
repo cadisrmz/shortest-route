@@ -26,12 +26,12 @@ public class DataGraphTest {
 		
 		// PNQ should not be connected to anything else
 		assertNotNull(nodePnq);
-		assertEquals(nodePnq.connectedTo.size(), 0);
+		assertEquals(nodePnq.getConnectionCount(), 0);
 		
 		// BOM should not be connected to PNQ and nothing else
 		assertNotNull(nodeBom);
-		assertEquals(nodeBom.connectedTo.size(), 1);
-		assertTrue(nodeBom.connectedTo.remove(nodePnq));
+		assertEquals(nodeBom.getConnectionCount(), 1);
+		assertTrue(nodeBom.isConnectedTo(nodePnq));
 	}
 	
 	@Test
@@ -46,17 +46,17 @@ public class DataGraphTest {
 		
 		// PNQ should not be connected to anything else
 		assertNotNull(nodePnq);
-		assertEquals(nodePnq.connectedTo.size(), 0);
+		assertEquals(nodePnq.getConnectionCount(), 0l);
 		
 		// DEL should not be connected to anything else
 		assertNotNull(nodeDel);
-		assertEquals(nodeDel.connectedTo.size(), 0);
+		assertEquals(nodeDel.getConnectionCount(), 0l);
 		
 		// BOM should not be connected to PNQ and DEL and nothing else
 		assertNotNull(nodeBom);
-		assertEquals(nodeBom.connectedTo.size(), 2);
-		assertTrue(nodeBom.connectedTo.remove(nodePnq));
-		assertTrue(nodeBom.connectedTo.remove(nodeDel));
+		assertEquals(nodeBom.getConnectionCount(), 2);
+		assertTrue(nodeBom.isConnectedTo(nodePnq));
+		assertTrue(nodeBom.isConnectedTo(nodeDel));
 	}
 
 	@Test

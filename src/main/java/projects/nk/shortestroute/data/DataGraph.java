@@ -135,9 +135,9 @@ public class DataGraph {
 	}
 
 	/** Each node in the DataGraph */
-	class DataNode {
-		String data;
-		Set<DataNode> connectedTo = new HashSet<DataNode>();
+	protected class DataNode {
+		private String data;
+		private Set<DataNode> connectedTo = new HashSet<DataNode>();
 
 		public DataNode(String data) {
 			this.data = data;
@@ -173,6 +173,21 @@ public class DataGraph {
 			} else if (!data.equals(other.data))
 				return false;
 			return true;
+		}
+
+		/** Get the number of outgoing connections 
+		 * from this nodes. */
+		public int getConnectionCount() {
+			return this.connectedTo.size();
+		}
+
+		/** Check if there is an outgoing connection from this node
+		 * to the specified node
+		 * @param node DataNode to which an outgoing connection needs to be verified
+		 * @return
+		 */
+		public boolean isConnectedTo(DataNode node) {			
+			return connectedTo.contains(node);
 		}
 	}
 
