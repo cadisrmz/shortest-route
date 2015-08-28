@@ -46,7 +46,7 @@ public class DataGraph {
 			// push the data
 			// and we use the finally block to clean up, no matter what
 			currPath.push(currNodeData);
-			LOG.info("Visiting: "+currPath);
+			LOG.debug("Visiting: "+currPath);
 			// recursion always has a termination condition
 			// if we found the data, then we add the path to
 			// the list of solutions and return
