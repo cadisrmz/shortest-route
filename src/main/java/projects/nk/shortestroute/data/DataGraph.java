@@ -195,6 +195,13 @@ public class DataGraph {
 		}
 	}
 
+	/**
+	 * Gets the count of the outgoing connections from the mentioned
+	 * node
+	 * @param nodeData the node for which the count has to be fetched
+	 * @return count of the outgoing connections
+	 * @throws ObjectNotFoundException When the mentioned nodeData is not found in the graph
+	 */
 	public int getConnectionCount(String nodeData) 
 		throws ObjectNotFoundException {
 		DataNode node = getGraphNode(nodeData);		
@@ -203,6 +210,13 @@ public class DataGraph {
 		return node.getConnectionCount();
 	}
 
+	/**
+	 * Check if the mentioned Source is directly connection to dest
+	 * @param src the node to be treated as source
+	 * @param dest the node to be treated as destination
+	 * @return true if a direct connection can be found
+	 * @throws ObjectNotFoundException when either of the nodes are not in the graph
+	 */
 	public boolean isConnected(String src, String dest) 
 			throws ObjectNotFoundException {
 		DataNode srcNode = getGraphNode(src);
