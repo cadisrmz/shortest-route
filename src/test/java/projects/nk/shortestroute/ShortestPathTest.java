@@ -45,20 +45,20 @@ public class ShortestPathTest {
 		Path dataFilePath = Paths.get(filename);
 		DataGraph dataGraph = new DataGraph();
 		
-		if (dataFilePath.toFile().exists()) {
+		if (!dataFilePath.toFile().exists()) {
 			// file not found in path
-			try ( Stream<String> lines = Files.lines(dataFilePath) ) {
-				lines.map(line->line.trim().split(" "))					
-				.filter(lineElements -> lineElements.length >= 2)
-				.forEach(parts -> {
-					dataGraph.populateGraph(parts[0], parts[1]);
-				});
-			} catch (IOException e) {
-				LOG.error("Error accessing file:", e);
-				fail("Error accessing file: " + filename);
-			}
-		} else {
 			fail("File Not Found: " + filename);
+		}
+		
+		try ( Stream<String> lines = Files.lines(dataFilePath) ) {
+			lines.map(line->line.trim().split(" "))					
+			.filter(lineElements -> lineElements.length >= 2)
+			.forEach(parts -> {
+				dataGraph.populateGraph(parts[0], parts[1]);
+			});
+		} catch (IOException e) {
+			LOG.error("Error accessing file:", e);
+			fail("Error accessing file: " + filename);
 		}
 		
 		return dataGraph;

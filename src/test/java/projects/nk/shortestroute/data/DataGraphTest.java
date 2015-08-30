@@ -1,20 +1,14 @@
 package projects.nk.shortestroute.data;
 
 import static org.junit.Assert.*;
-
-import java.util.List;
-
 import org.junit.Test;
-
-import projects.nk.shortestroute.ShortestPath;
 
 public class DataGraphTest {
 
 	private static final String DEL = "DEL";
 	private static final String BOM = "BOM";
 	private static final String PNQ = "PNQ";
-	private static final String TEST_SAMPLE_DATA_TXT = "src/test/resources/test-sample-data.txt";
-		
+	
 	@Test
 	public void testFindInvalidNode() throws ObjectNotFoundException {
 		DataGraph dataGraph = new DataGraph();
